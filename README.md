@@ -45,9 +45,17 @@ go get github.com/gimanzo/shawty
 
 export SHAWTY_STORAGE_PATH=<your local storage path>
 export SHAWTY_SALT=<your salt>
+//optional
+export GOOGLE_TRACKER_ID=<your google analytics trackingid>
 
 go build
 ./shawty
+```
+
+### Building the docker file
+
+```
+docker build -t gimanzo/shawty .
 ```
 
 

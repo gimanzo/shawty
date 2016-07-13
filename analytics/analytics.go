@@ -1,7 +1,7 @@
 package analytics
 
 import (
-	"github.com/jpillora/go-ogle-analytics"
+	"github.com/gimanzo/go-ogle-analytics"
 	"os"
 	"fmt"
 )
