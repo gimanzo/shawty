@@ -17,7 +17,7 @@ curl -XPOST localhost:8080/encode --data "url=http://dillbuck.com"
 
 ### Decode
 ```
-curl -XPOST localhost:8080/decode/pnel5aK
+curl localhost:8080/decode/pnel5aK
 
 >>> http://dillbuck.com
 
@@ -25,7 +25,7 @@ curl -XPOST localhost:8080/decode/pnel5aK
 
 ### Redirect
 ```
-curl -XPOST localhost:8080/redirect/pnel5aK
+curl localhost:8080/pnel5aK
 
 >>>  301 -> http://dillbuck.com
 

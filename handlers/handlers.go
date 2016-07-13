@@ -38,7 +38,7 @@ func DecodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Hand
 
 func RedirectHandler(storage storages.IStorage, encoder *hashids.HashID) http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
-		hash := r.URL.Path[len("/redirect/"):]
+		hash := r.URL.Path[len("/"):]
 		url, err := Decode(hash, encoder, storage)
 		if err != nil {
 			fmt.Println(err.Error())
