@@ -33,6 +33,12 @@ curl -XPOST localhost:8080/redirect/pnel5aK
 
 ## Getting started
 
+Docker
+```
+docker run -v <host path>:/data -e "SHAWTY_STORAGE_PATH=/data" -e "SHAWTY_HASH_SALT=<salt>" -d -p 8080:8080 gimanzo/shawty
+```
+
+Old School way:
 ```
 go get github.com/gimanzo/shawty
 
