@@ -23,7 +23,7 @@ func (s *Filesystem) Code() string {
 	files, _ := ioutil.ReadDir(s.Root)
 	s.Unlock()
 
-	return strconv.FormatUint(uint64(len(files)+1), 36)
+	return strconv.FormatUint(uint64(len(files)+1), 10)
 }
 
 func (s *Filesystem) Save(url string) string {

@@ -3,7 +3,6 @@ package storages
 import (
 	"path/filepath"
 	"testing"
-
 	"github.com/mitchellh/go-homedir"
 )
 
