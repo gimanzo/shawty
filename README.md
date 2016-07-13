@@ -35,8 +35,12 @@ curl -XPOST localhost:8080/redirect/pnel5aK
 
 ```
 go get github.com/gimanzo/shawty
+
 export SHAWTY_STORAGE_PATH=<your local storage path>
 export SHAWTY_SALT=<your salt>
+
+go build
+./shawty
 ```
 
 
