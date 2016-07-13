@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"github.com/gimanzo/shawty/storages"
+	"github.com/gimanzo/shawty/analytics"
 	"strconv"
 	"github.com/speps/go-hashids"
 	"fmt"
@@ -14,8 +15,9 @@ func EncodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Hand
 			id := storage.Save(url)
 			intId, _ := strconv.Atoi(id)
 			intArray := []int{intId}
-			encoded, _ := encoder.Encode(intArray)
-			w.Write([]byte(encoded))
+			hash, _ := encoder.Encode(intArray)
+			w.Write([]byte(hash))
+			analytics.Log(analytics.CategoryEncode, url, hash, analytics.StatusSuccess)
 		}
 	}
 
@@ -24,13 +26,16 @@ func EncodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Hand
 
 func DecodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
-		url, err := Decode(r.URL.Path[len("/decode/"):], encoder, storage)
+		hash := r.URL.Path[len("/decode/"):]
+		url, err := Decode(hash, encoder, storage)
 		if err != nil {
 			fmt.Println(err.Error())
 			w.WriteHeader(http.StatusNotFound)
+			analytics.Log(analytics.CategoryDecode, "", hash, analytics.StatusMiss)
 			w.Write([]byte("URL Not Found"))
 			return
 		}
+		analytics.Log(analytics.CategoryDecode, url, hash, analytics.StatusHit)
 		w.Write([]byte(url))
 	}
 	return http.HandlerFunc(handleFunc)
@@ -43,9 +48,11 @@ func RedirectHandler(storage storages.IStorage, encoder *hashids.HashID) http.Ha
 		if err != nil {
 			fmt.Println(err.Error())
 			w.WriteHeader(http.StatusNotFound)
+			analytics.Log(analytics.CategoryRedirect, "", hash, analytics.StatusMiss)
 			w.Write([]byte("URL Not Found"))
 			return
 		}
+		analytics.Log(analytics.CategoryRedirect, url, hash, analytics.StatusSuccess)
 		http.Redirect(w, r, string(url), 301)
 	}
 	return http.HandlerFunc(handleFunc)

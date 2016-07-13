@@ -14,35 +14,8 @@ import (
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	storage := &storages.Filesystem{}
-	storageEnv := "SHAWTY_STORAGE_PATH"
-	saltEnv := "SHAWTY_HASH_SALT"
-
-	storagePath := os.Getenv(storageEnv)
-	if storagePath == ""  {
-		fmt.Println(storageEnv, "not defined, exiting.")
-		os.Exit(1)
-	}
-	fmt.Println(storageEnv, ":", storagePath)
-
-	hashData := hashids.NewData()
-	salt := os.Getenv(saltEnv)
-	if salt == "" {
-		fmt.Println(saltEnv, "not defined, exiting.")
-		os.Exit(1)
-	}
-	hashData.Salt = salt
-	hashData.MinLength = 7
-
-	encoder := hashids.NewWithData(hashData)
-
-
-	err := storage.Init(storagePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	storage := getStorage()
+	encoder := getEncoder()
 	http.Handle("/encode", handlers.EncodeHandler(storage, encoder))
 	http.Handle("/decode/", handlers.DecodeHandler(storage, encoder))
 	http.Handle("/", handlers.RedirectHandler(storage, encoder))
@@ -51,8 +24,39 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	err = http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+func getStorage() storages.IStorage {
+	storage := &storages.Filesystem{}
+	storageEnv := "SHAWTY_STORAGE_PATH"
+	storagePath := getEnv(storageEnv)
+	fmt.Println(storageEnv, ":", storagePath)
+
+	err := storage.Init(storagePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return storage
+}
+
+func getEncoder() *hashids.HashID {
+	hashData := hashids.NewData()
+
+	saltEnv := "SHAWTY_HASH_SALT"
+	salt := getEnv(saltEnv)
+	hashData.Salt = salt
+	hashData.MinLength = 7
+	return hashids.NewWithData(hashData)
+}
+
+func getEnv(variableName string) string {
+	variable := os.Getenv(variableName)
+	if variableName == ""  {
+		fmt.Println(variableName, "not defined, exiting.")
+		os.Exit(1)
+	}
+	return variable
 }
