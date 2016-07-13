@@ -14,6 +14,7 @@ curl -XPOST localhost:8080/encode --data "url=http://dillbuck.com"
 >>> pnel5aK
 
 ```
+<strong>NOTE: url must include the full url, http://etc... </strong>
 
 ### Decode
 ```
