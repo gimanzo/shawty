@@ -17,7 +17,7 @@ func EncodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Hand
 			intArray := []int{intId}
 			hash, _ := encoder.Encode(intArray)
 			w.Write([]byte(hash))
-			analytics.Log(analytics.CategoryEncode, url, hash, analytics.StatusSuccess)
+			analytics.Log(analytics.CategoryEncode, url, hash, analytics.StatusSuccess, r)
 		}
 	}
 
@@ -31,29 +31,29 @@ func DecodeHandler(storage storages.IStorage, encoder *hashids.HashID) http.Hand
 		if err != nil {
 			fmt.Println(err.Error())
 			w.WriteHeader(http.StatusNotFound)
-			analytics.Log(analytics.CategoryDecode, "", hash, analytics.StatusMiss)
+			analytics.Log(analytics.CategoryDecode, "", hash, analytics.StatusMiss, r)
 			w.Write([]byte("URL Not Found"))
 			return
 		}
-		analytics.Log(analytics.CategoryDecode, url, hash, analytics.StatusHit)
+		analytics.Log(analytics.CategoryDecode, url, hash, analytics.StatusHit, r)
 		w.Write([]byte(url))
 	}
 	return http.HandlerFunc(handleFunc)
 }
 
 func RedirectHandler(storage storages.IStorage, encoder *hashids.HashID) http.Handler {
-	handleFunc := func(w http.ResponseWriter, r *http.Request) {
-		hash := r.URL.Path[len("/"):]
+	handleFunc := func(w http.ResponseWriter, request *http.Request) {
+		hash := request.URL.Path[len("/"):]
 		url, err := Decode(hash, encoder, storage)
 		if err != nil {
 			fmt.Println(err.Error())
 			w.WriteHeader(http.StatusNotFound)
-			analytics.Log(analytics.CategoryRedirect, "", hash, analytics.StatusMiss)
+			analytics.Log(analytics.CategoryRedirect, "", hash, analytics.StatusMiss, request)
 			w.Write([]byte("URL Not Found"))
 			return
 		}
-		analytics.Log(analytics.CategoryRedirect, url, hash, analytics.StatusSuccess)
-		http.Redirect(w, r, string(url), 301)
+		analytics.Log(analytics.CategoryRedirect, url, hash, analytics.StatusSuccess, request)
+		http.Redirect(w, request, string(url), 301)
 	}
 	return http.HandlerFunc(handleFunc)
 }
