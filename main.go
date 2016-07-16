@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	os.Setenv("APP_VERSION", "0.1")
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	storage := getStorage()
 	encoder := getEncoder()

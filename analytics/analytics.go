@@ -22,7 +22,9 @@ func Log(category EventCategory, url string, hash string, status EventStatus, re
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Headers", request)
+	if(os.Getenv("DEBUG") != "") {
+		fmt.Println("Headers", request)
+	}
 
 	client.ApplicationName("kwk.co")
 
